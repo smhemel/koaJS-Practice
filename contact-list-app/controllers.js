@@ -1,20 +1,25 @@
 const User = require("./models/User");
+const { isValid } = require("./validation");
 
 exports.createNewContact = async (ctx) => {
 
-    const user = new User(ctx.request.body);
-    
-    try {
-        await user.save();
-        return ( ctx.body = { message: "User Created", user});
-    } catch(e) {
-        console.log(e);
+
+    if(isValid(ctx.request.body)) {
+       const user = new User(ctx.request.body);
+        try {
+            await user.save();
+            return ( ctx.body = { message: "User Created", user});
+        } catch(e) {
+            console.log(e);
+        }
     }
+
+    return ( ctx.body = { message: "Data is not valid."});
     
 };
 
 exports.getAllContacts = async (ctx) => {
-    
+
     const users = await User.find();
     return (ctx.body = { message: "All contacts" ,users});
 };
